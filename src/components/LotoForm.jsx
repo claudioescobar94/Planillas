@@ -92,7 +92,7 @@ export default function LotoForm() {
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className="block font-medium">Responsable del LOTO</label>
+          <label className="block font-medium">Responsable LOTO</label>
           <input
             type="text"
             name="responsable"
