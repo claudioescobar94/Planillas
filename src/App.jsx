@@ -1,75 +1,81 @@
-import { useState } from 'react';
-import PlanillaCard from './components/PlanillaCard';
-import LotoModal from './components/LotoModal';
-import ParadaModal from './components/ParadaModal'
-import KpiLotoChart from './components/KpiLotoChart'
-import KpiParadasChart from './components/KpiParadasChart'
-import KpiMaquinasChart from './components/KpiMaquinasChart'
-
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import SeguridadPage from './pages/SeguridadPage';
+import ProduccionPage from './pages/ProduccionPage';
+import HomePage from './pages/HomePage';
+import SecadoPage from './pages/produccion/SecadoPage';
+import LSIPage from './pages/produccion/LSIPage';
+import LPPage from './pages/produccion/LPPage';
 
 export default function App() {
-  const [showModal, setShowModal] = useState(false);
-  const [showParadaModal, setShowParadaModal] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">Planillas</h1>
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        {/* Encabezado formal */}
+        <header className="bg-white shadow mb-8">
+          <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-gray-800">Planillas</h1>
+            {/* Botón hamburguesa para móviles */}
+            <button
+              className="md:hidden text-3xl"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Abrir menú"
+            >
+              ☰
+            </button>
+            {/* Navegación */}
+            <nav
+              className={`flex-col md:flex-row md:flex gap-6 text-gray-700 font-medium absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent shadow md:shadow-none transition-all duration-300 z-10 ${
+                menuOpen ? 'flex pb-8' : 'hidden md:flex'
+              }`}
+            >
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) =>
+                  `hover:text-blue-600 transition px-3 py-1 rounded ${isActive ? 'bg-gray-200 shadow' : ''}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                Inicio
+              </NavLink>
+              <NavLink
+                to="/seguridad"
+                className={({ isActive }) =>
+                  `hover:text-blue-600 transition px-3 py-1 rounded ${isActive ? 'bg-gray-200 shadow' : ''}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                Seguridad
+              </NavLink>
+              <NavLink
+                to="/produccion"
+                className={({ isActive }) =>
+                  `hover:text-blue-600 transition px-3 py-1 rounded ${isActive ? 'bg-gray-200 shadow' : ''}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                Producción
+              </NavLink>
+            </nav>
+          </div>
+        </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <PlanillaCard
-          titulo="LOTO"
-          descripcion="Procedimiento de seguridad en intervenciones"
-          onClick={() => setShowModal(true)}
-        />
-
-        <PlanillaCard
-          titulo="Parada de Producción"
-          descripcion="Registro de tiempos muertos y causas"
-          onClick={() => setShowParadaModal(true)}
-        />
-
-        <PlanillaCard
-          titulo="Otra planilla"
-          descripcion="Próximamente..."
-          disabled
-        />
+        {/* Contenido de las páginas */}
+        <main className="container mx-auto px-6">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/seguridad" element={<SeguridadPage />} />
+          <Route path="/produccion" element={<ProduccionPage />}>
+            <Route path="secado" element={<SecadoPage />} />
+            <Route path="lsi" element={<LSIPage />} />
+            <Route path="lp" element={<LPPage />} />
+          </Route>
+        </Routes>
+        </main>
       </div>
-
-      {showModal && <LotoModal onClose={() => setShowModal(false)} />}
-      {showParadaModal && <ParadaModal onClose={() => setShowParadaModal(false)} />}
-
-      {/* Indicadores debajo de las planillas */}
-      <div className="mt-10">
-        <h2 className="text-xl font-bold mb-4">Indicadores de Seguridad y Producción</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          
-          <div className="bg-white p-4 rounded shadow text-center">
-            <h3 className="text-lg font-semibold text-gray-700">🛠️ LOTO realizados este mes</h3>
-            <p className="text-3xl font-bold text-blue-600">12</p>
-            <div className="mt-4">
-              <KpiLotoChart />
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded shadow text-center">
-            <h3 className="text-lg font-semibold text-gray-700">⏱️ Horas de parada acumuladas</h3>
-            <p className="text-3xl font-bold text-red-600">42 hs</p>
-            <div className="mt-4">
-              <KpiParadasChart />
-            </div>
-          </div>
-
-          <div className="bg-white p-4 rounded shadow text-center">
-            <h3 className="text-lg font-semibold text-gray-700">🏭 Máquina más afectada</h3>
-            <p className="text-2xl font-bold text-yellow-600">F.41.29</p>
-            <div className="mt-4">
-              <KpiMaquinasChart />
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
+    </Router>
   );
 }
